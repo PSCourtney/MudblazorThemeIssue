@@ -32,6 +32,58 @@
         <span class="dismiss">🗙</span>
     </div>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        // iOS Safari PWA theme fix for MudBlazor
+        // Addresses WebKit dropping injected <style> elements on app resume
+        window.mudThemeIosFix = {
+            init: function (styleIdGuess) {
+                const tryFix = () => {
+                    // Try common MudBlazor theme style ids; also allow passing one in.
+                    const ids = [
+                        styleIdGuess,
+                        "mudblazor-theme-provider",
+                        "mud-theme-provider",
+                        "mudblazor-theme",
+                        "mud-theme"
+                    ].filter(Boolean);
+
+                    let el = null;
+                    for (const id of ids) {
+                        el = document.getElementById(id);
+                        if (el) break;
+                    }
+
+                    // If no id match, try finding by content (look for CSS variables)
+                    if (!el) {
+                        const styleElements = document.querySelectorAll('head > style');
+                        for (const style of styleElements) {
+                            if (style.textContent && style.textContent.includes('--mud-palette-')) {
+                                el = style;
+                                break;
+                            }
+                        }
+                    }
+
+                    // If you find the real id in devtools, put it in styleIdGuess for reliability.
+                    if (!el) return;
+
+                    // Clone+replace forces Safari/WebKit to re-evaluate the style node.
+                    const clone = el.cloneNode(true);
+                    el.parentNode.replaceChild(clone, el);
+                };
+
+                document.addEventListener("visibilitychange", () => {
+                    if (!document.hidden) tryFix();
+                });
+
+                // pageshow fires on BFCache restores; useful for iOS standalone weirdness.
+                window.addEventListener("pageshow", () => tryFix());
+
+                // Also run once shortly after startup.
+                setTimeout(tryFix, 0);
+            }
+        };
+    </script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>

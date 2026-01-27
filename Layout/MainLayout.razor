@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="true" />
 <MudDialogProvider />
@@ -24,6 +25,15 @@
 @code {
     private bool _drawerOpen = true;
     private readonly CustomTheme _theme = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // Initialize iOS Safari theme fix to prevent style loss on PWA resume
+        // If you identify the exact style id in devtools, pass it as the parameter
+        await JS.InvokeVoidAsync("mudThemeIosFix.init", (string?)null);
+    }
 
     private void ToggleDrawer()
     {
