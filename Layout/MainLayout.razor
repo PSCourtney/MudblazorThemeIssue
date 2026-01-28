@@ -1,7 +1,7 @@
 ﻿@using MudBlazor.Interfaces
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="true" />
+<MudThemeProvider @ref="_themeProvider" Theme="@_theme" IsDarkMode="true" ObserveSystemDarkModeChange="false"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -10,8 +10,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
         <MudText Typo="Typo.h6">MudblazorThemeIssue</MudText>
         <MudSpacer />
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Href="https://learn.microsoft.com/aspnet/core/" Target="_blank">About</MudButton>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RefreshTheme">Refresh Theme</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RefreshTheme">Refresh</MudButton>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="1">
         <NavMenu />
@@ -33,7 +32,7 @@
         _drawerOpen = !_drawerOpen;
     }
 
-    private void RefreshTheme()
+     private void RefreshTheme()
     {
         ((IMudStateHasChanged)_themeProvider).StateHasChanged();
     }
