@@ -32,8 +32,10 @@
         _drawerOpen = !_drawerOpen;
     }
 
-     private void RefreshTheme()
+    private void RefreshTheme()
     {
-        ((IMudStateHasChanged)_themeProvider).StateHasChanged();
+        var method = typeof(ComponentBase).GetMethod("StateHasChanged",
+         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        method?.Invoke(_themeProvider, null);
     }
 }
